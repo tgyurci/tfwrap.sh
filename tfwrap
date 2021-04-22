@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# tfwrap - Minimalist Terraform wrapper, similar to tfenv
+
+set -eu
+
+err() {
+	echo "$@" >&2
+	exit 1
+}
+
+[ -f ".terraform-version" ] || err "No such file: .terrform-version"
+[ -r ".terraform-version" ] || err "File is not readable: .terrform-version"
+
+terraform_basedir="$HOME/.local/terraform"
+tfver="$(cat .terraform-version)"
+
+terraform_bin="${terraform_basedir}/${tfver:-"default"}/terraform"
+
+[ -x "$terraform_bin" ] || err "Terraform binary not found: $terraform_bin" 
+
+exec "$terraform_bin" "$@"
