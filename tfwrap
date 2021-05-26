@@ -27,7 +27,7 @@ debug() {
 
 source_rc() {
 	if [ -r "$1" ]; then
-		debug "Sourcing rc ${2+"from $2"}: $1"
+		debug "Sourcing rc${2+" from $2"}: $1"
 
 		# shellcheck source=/dev/null
 		. "$1"
