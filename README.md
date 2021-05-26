@@ -41,19 +41,19 @@ After installed the proper Terraform binary, run the command `tfwrap` (or
 ## Configuration
 
 At startup `tfwrap` reads it's configuration from both
-`$HOME/.config/tfwrap/tfwraprc` and `$HOME/.tfwraprc` in this order.  When the
-environment variable `TFWRAP_RC` is defined and it's value is a readable file,
-then configuration is read only from that file, the above configuration files
-are skipped.
+`$HOME/.config/tfwrap/tfwraprc` (respecting `$XDG_CONFIG_HOME`) and
+`$HOME/.tfwraprc` in this order.  When the environment variable `TFWRAP_RC` is
+defined and it's value is a readable file, then configuration is read only from
+that file, the above configuration files are skipped.
 
-The following variables can be set to configure `tfwrap`.  These can be set as
-an environment variable as well:
+The following variables can be used to configure `tfwrap`.  These can be set as
+environment variables as well:
 
-* `TFWRAP_DEBUG`: If set to any non-empty value then `tfwrap` will print debug information to
-  stderr
+* `TFWRAP_DEBUG`: If set to any non-empty value then `tfwrap` will print debug
+  information to stderr.
 * `TFWRAP_SKIP_RC`: If set to any non-empty value then no configuration file is
-  read
-* `TFWRAP_RC`: Configuration file location
+  read.
+* `TFWRAP_RC`: Configuration file location.
 * `TFWRAP_TERRAFORM_BASEDIR`: Base directory where `tfwrap` looks for a
   Terraform binary to pass execution to.  It defaults to
   `$HOME/.local/libexec/terraform`.
