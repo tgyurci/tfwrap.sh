@@ -9,29 +9,20 @@ be.
 
 ## Installation
 
-Copy the `tfwrap` file into a directory which is on `$PATH`:
+You can install `tfwrap` with the included `Makefile`:
 
 ```sh
-sudo cp tfwrap /usr/local/bin
+sudo make install
 ```
 
-Or just install it for the current user:
+This will copy the `tfwrap` script to `/usr/local/bin` and create a symlink
+named `terraform` pointing to it in the same directory.
+
+If you want to install to an other directory, you can set the `PREFIX` variable
+for the `make` command:
 
 ```sh
-cp tfwrap ~/.local/bin
-```
-
-Additionally, you can create a symlink named `terraform` to "hide" the actual
-wrapper:
-
-```sh
-sudo ln -s /usr/local/bin/tfwrap /usr/local/bin/terraform
-```
-
-Or for the current user:
-
-```sh
-ln -s ~/.local/bin/tfwrap ~/.local/bin/terraform
+make PREFIX=~/.local install
 ```
 
 ## Usage
