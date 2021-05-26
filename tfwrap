@@ -17,12 +17,40 @@ debug() {
 	fi
 }
 
+# Defaults settings
+
+: "${TFWRAP_SKIP_RC:=""}"
+: "${TFWRAP_RC:=""}"
+: "${TFWRAP_TERRAFORM_BASEDIR:="$HOME/.local/libexec/terraform"}"
+
+# Source rc file(s)
+
+source_rc() {
+	if [ -r "$1" ]; then
+		debug "Sourcing rc ${2+"from $2"}: $1"
+
+		# shellcheck source=/dev/null
+		. "$1"
+	fi
+}
+
+if [ -z "$TFWRAP_SKIP_RC" ]; then
+	if [ -n "$TFWRAP_RC" ]; then
+		source_rc "$TFWRAP_RC" "\$TFWRAP_RC"
+	else
+		for rcfile in "${XDG_CONFIG_HOME:-"$HOME/.config"}/tfwrap/tfwraprc" "$HOME/.tfwraprc"; do
+			source_rc "$rcfile"
+		done
+	fi
+else
+	debug "Skipping sourcing rc files, \$TFWRAP_SKIP_RC is defined"
+fi
+
 # Reading Terraform version file
 
 [ -f ".terraform-version" ] || err "No such file: .terrform-version"
 [ -r ".terraform-version" ] || err "File is not readable: .terrform-version"
 
-terraform_basedir="$HOME/.local/terraform"
 tfver="$(tr -d '[:blank:]' < .terraform-version)"
 
 [ -n "$tfver" ] || err "Terraform version file is empty: .terraform-version"
@@ -31,7 +59,7 @@ debug "Selected Terraform version: $tfver"
 
 # Running Terraform binary
 
-terraform_bin="${terraform_basedir}/${tfver:-"default"}/terraform"
+terraform_bin="${TFWRAP_TERRAFORM_BASEDIR}/${tfver}/terraform"
 
 debug "Trying to use Terraform binary: $terraform_bin"
 
