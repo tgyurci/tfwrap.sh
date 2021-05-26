@@ -4,6 +4,8 @@
 
 set -eu
 
+# Common functions
+
 err() {
 	echo "tfwrap:" "$@" >&2
 	exit 1
@@ -15,13 +17,19 @@ debug() {
 	fi
 }
 
+# Reading Terraform version file
+
 [ -f ".terraform-version" ] || err "No such file: .terrform-version"
 [ -r ".terraform-version" ] || err "File is not readable: .terrform-version"
 
 terraform_basedir="$HOME/.local/terraform"
-tfver="$(cat .terraform-version)"
+tfver="$(tr -d '[:blank:]' < .terraform-version)"
+
+[ -n "$tfver" ] || err "Terraform version file is empty: .terraform-version"
 
 debug "Selected Terraform version: $tfver"
+
+# Running Terraform binary
 
 terraform_bin="${terraform_basedir}/${tfver:-"default"}/terraform"
 
