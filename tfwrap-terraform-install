@@ -1,0 +1,135 @@
+#!/bin/sh
+
+set -eu
+
+# Common functions
+
+err() {
+	echo "tfwrap-terraform-install: error:" "$@" >&2
+	exit 1
+}
+
+debug() {
+	if [ -n "${TFWRAP_DEBUG:-}" ]; then
+		echo "tfwrap-terraform-install:" "$@" >&2
+	fi
+}
+
+command_exists() {
+	command -v "$1" 2>/dev/null >&2
+}
+
+# Defaults settings
+
+: "${TFWRAP_SKIP_RC:=""}"
+: "${TFWRAP_RC:=""}"
+: "${TFWRAP_TERRAFORM_BASEDIR:="$HOME/.local/libexec/terraform"}"
+: "${TFWRAP_TERRAFORM_DISTDIR:="$HOME/.terraform.d/dist-cache"}"
+: "${TFWRAP_TERRAFORM_SKIP_VERIFY:=""}"
+: "${TFWRAP_TERRAFORM_SKIP_EXTRACT:=""}"
+
+# Source rc file(s)
+
+source_rc() {
+	if [ -r "$1" ]; then
+		debug "Sourcing rc${2+" from $2"}: $1"
+
+		# shellcheck source=/dev/null
+		. "$1"
+	fi
+}
+
+if [ -z "$TFWRAP_SKIP_RC" ]; then
+	if [ -n "$TFWRAP_RC" ]; then
+		source_rc "$TFWRAP_RC" "\$TFWRAP_RC"
+	else
+		for rcfile in "${XDG_CONFIG_HOME:-"$HOME/.config"}/tfwrap/tfwraprc" "$HOME/.tfwraprc"; do
+			source_rc "$rcfile"
+		done
+	fi
+else
+	debug "\$TFWRAP_SKIP_RC is defined, skipping sourcing rc files."
+fi
+
+version=""
+: "${os:="$(uname -s)"}"
+: "${arch:="$(uname -m)"}"
+
+while getopts :v:s:m: opt; do
+	case "$opt" in
+		v) version="$OPTARG" ;;
+		s) os="$OPTARG" ;;
+		m) arch="$OPTARG" ;;
+		\?) err "Unknown flag: $opt" ;;
+	esac
+done
+
+[ -n "$version" ] || err "Version (-v) must be specified!"
+
+case "$arch" in
+	"i386") arch="386" ;;
+	"x86_64") arch="amd64" ;;
+esac
+
+os="$(echo "$os" | tr '[:upper:]' '[:lower:]')"
+
+debug "Fetching Terraform $version $os $arch" 
+
+terraform_dist_dir="${TFWRAP_TERRAFORM_DISTDIR}/${version}"
+
+debug "Terraform dist directory: $terraform_dist_dir"
+
+mkdir -p "$terraform_dist_dir"
+cd "$terraform_dist_dir"
+
+command_exists curl ||
+	err "The command 'curl' is not found!  Install Curl in order to download the distribution!"
+
+url_prefix="https://releases.hashicorp.com/terraform/${version}"
+
+dist_file="terraform_${version}_${os}_${arch}.zip"
+debug "Fething dist: $dist_file"
+curl -fLOsS "${url_prefix}/${dist_file}"
+
+checksum_file="terraform_${version}_SHA256SUMS"
+debug "Fething checksum: $checksum_file"
+curl -fLOsS "${url_prefix}/${checksum_file}"
+
+checksum_sig_file="terraform_${version}_SHA256SUMS.sig"
+debug "Fetching checksum signature: $checksum_sig_file"
+curl -fLOsS "${url_prefix}/${checksum_sig_file}"
+
+if [ -z "$TFWRAP_TERRAFORM_SKIP_VERIFY" ]; then
+	command_exists shasum ||
+		err "The command 'shasum' is not found!  Install Perl 5 or \
+define TFWRAP_TERRAFORM_SKIP_VERIFY to skip verification!"
+
+	debug "Verifying dist checksum"
+	grep -e "${dist_file}" "${checksum_file}" | shasum -q -c - ||
+		err "Checksum failed for: ${terraform_dist_dir}/${dist_file} with ${terraform_dist_dir}/${checksum_file}"
+
+	command_exists gpgv ||
+		err "The command 'gpgv' is not found! Install GnuPG or \
+define TFWRAP_TERRAFORM_SKIP_VERIFY to skip verification!"
+
+	debug "Verifying checksum signature"
+	gpgv --quiet "${checksum_sig_file}" "${checksum_file}" ||
+		err "Signature verification failed for: ${terraform_dist_dir}/${checksum_file}"
+else
+	debug "\$TFWRAP_TERRAFORM_SKIP_VERIFY is set, skipping dist verify"
+fi
+
+if [ -z "$TFWRAP_TERRAFORM_SKIP_EXTRACT" ]; then
+	command_exists unzip ||
+		err "The command 'unzip' is not found! Please install Unzip \
+or define TFWRAP_TERRAFORM_SKIP_EXTRACT to skip extration of the downloaded distribution."
+
+	terraform_bin_dir="$TFWRAP_TERRAFORM_BASEDIR/$version"
+
+	debug "Extracting Terraform binary to: $terraform_bin_dir"
+
+	mkdir -p "$terraform_bin_dir"
+	unzip -o -qq "${terraform_dist_dir}/${dist_file}" -d "${terraform_bin_dir}"
+else
+	debug "\$TFWRAP_TERRAFORM_SKIP_EXTRACT is set, skipping extracting distribution"
+fi
