@@ -1,9 +1,11 @@
 .DEFAULT_GOAL := build
 
+DESTDIR ?=
 PREFIX ?= /usr/local
 
 build:
 
 install:
-	install -C tfwrap $(PREFIX)/bin/tfwrap
-	ln -sf tfwrap $(PREFIX)/bin/terraform
+	install -d $(DESTDIR)$(PREFIX)/bin
+	install -C tfwrap $(DESTDIR)$(PREFIX)/bin/tfwrap
+	ln -sf tfwrap $(DESTDIR)$(PREFIX)/bin/terraform
