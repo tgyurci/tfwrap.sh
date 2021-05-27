@@ -4,19 +4,24 @@
 different versions of Terraform.  The desired version is read from
 `.terraform-version` file it the current directory.
 
+A separate script, `tfwrap-terraform-install` is provided to ease installation
+of the individual Terraform binaries.
+
 It is influenced by [tfenv][], but the intent is to keep it as simple as it can
 be.
 
 ## Installation
 
-You can install `tfwrap` with the included `Makefile`:
+You can install `tfwrap` and `tfwrap-terraform-install` with the included
+`Makefile`:
 
 ```sh
 sudo make install
 ```
 
-This will copy the `tfwrap` script to `/usr/local/bin` and create a symlink
-named `terraform` pointing to it in the same directory.
+This will copy the `tfwrap` and `tfwrap-terraform-install` scripts to
+`/usr/local/bin` and create a symlink named `terraform` pointing to `tfwrap` in
+the same directory.
 
 If you want to install to an other directory, you can set the `PREFIX` variable
 for the `make` command:
@@ -25,18 +30,30 @@ for the `make` command:
 make PREFIX=~/.local install
 ```
 
+`tfwrap` does not install Terraform CLI itself, you must install the desired
+version manually.  Terraform CLI binaries can be downloaded and installed with
+the included `tfwrap-terraform-install` script:
+
+```sh
+tfwrap-terraform-install -v TERRAFORM_VERSION
+```
+
+You must replace `TERRAFORM_VERSION` with the desired Terraform version number.
+
+To verify the downloaded Terraform distribution make sure that HashiCorp's GPG
+key is in the `trustedkeys.kbx` keyring:
+
+```sh
+gpg --keyring trustedkeys.kbx --recv-key C874011F0AB405110D02105534365D9472D7468F
+```
+
+Always check [HashiCorp's Security](https://www.hashicorp.com/security) page for
+the correct key ID before importing.
+
 ## Usage
 
-`tfwrap` does not install Terraform CLI itself, you must install the desired
-version manually.  Terraform binaries are looked for by default in the path
-`~/.local/libexec/terraform/VERSION/terraform`.
-
-You can download different versions of Terraform CLI from here:
-https://releases.hashicorp.com/terraform/
-
-After installed the proper Terraform binary, run the command `tfwrap` (or
-`terraform` if symlinked) in a Terraform module, which contains a
-`.terraform-version` file.
+After installed the Terraform binary, run the command `tfwrap` (or `terraform`
+if symlinked) in a Terraform module, which contains a `.terraform-version` file.
 
 ## Configuration
 
@@ -57,6 +74,15 @@ environment variables as well:
 * `TFWRAP_TERRAFORM_BASEDIR`: Base directory where `tfwrap` looks for a
   Terraform binary to pass execution to.  It defaults to
   `$HOME/.local/libexec/terraform`.
+* `TFWRAP_TERRAFORM_DISTDIR`: Base directory where `tfwrap-terraform-install`
+  puts the downloaded distribution zip files.  It defaults to
+  `$HOME/.terraform.d/dist-cache`.
+* `TFWRAP_TERRAFORM_SKIP_VERIFY`: If set to any non-empty value then
+  `tfwrap-terraform-install` will not verify the downloaded distribution zip
+  file with GnuPG.
+* `TFWRAP_TERRAFORM_SKIP_EXTRACT`: If set to any non-empty value then
+  `tfwrap-terraform-install` will not extract the downloaded distribution zip
+  file to `$TFWRAP_TERRAFORM_BASEDIR`.
 
 [Terraform]: https://www.terraform.io/
 [tfenv]: https://github.com/tfutils/tfenv
