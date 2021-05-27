@@ -43,7 +43,7 @@ if [ -z "$TFWRAP_SKIP_RC" ]; then
 		done
 	fi
 else
-	debug "Skipping sourcing rc files, \$TFWRAP_SKIP_RC is defined"
+	debug "\$TFWRAP_SKIP_RC is defined, skipping sourcing rc files."
 fi
 
 # Reading Terraform version file
