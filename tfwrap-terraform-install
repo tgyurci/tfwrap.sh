@@ -105,7 +105,7 @@ if [ -z "$TFWRAP_TERRAFORM_SKIP_VERIFY" ]; then
 define TFWRAP_TERRAFORM_SKIP_VERIFY to skip verification!"
 
 	debug "Verifying dist checksum"
-	grep -e "${dist_file}" "${checksum_file}" | shasum -q -c - ||
+	grep -F -e "${dist_file}" "${checksum_file}" | shasum  -c - >/dev/null ||
 		err "Checksum failed for: ${terraform_dist_dir}/${dist_file} with ${terraform_dist_dir}/${checksum_file}"
 
 	command_exists gpgv ||
