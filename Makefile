@@ -2,11 +2,12 @@
 
 DESTDIR ?=
 PREFIX ?= /usr/local
+BINDIR ?= $(PREFIX)/bin
 
 build:
 
 install:
-	install -d $(DESTDIR)$(PREFIX)/bin
-	install -C tfwrap $(DESTDIR)$(PREFIX)/bin/tfwrap
-	ln -sf tfwrap $(DESTDIR)$(PREFIX)/bin/terraform
-	install -C tfwrap-terraform-install $(DESTDIR)$(PREFIX)/bin/tfwrap-terraform-install
+	install -d $(DESTDIR)$(BINDIR)
+	install -C tfwrap $(DESTDIR)$(BINDIR)/tfwrap
+	ln -sf tfwrap $(DESTDIR)$(BINDIR)/terraform
+	install -C tfwrap-terraform-install $(DESTDIR)$(BINDIR)/tfwrap-terraform-install
