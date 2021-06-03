@@ -22,6 +22,7 @@ debug() {
 : "${TFWRAP_SKIP_RC:=""}"
 : "${TFWRAP_RC:=""}"
 : "${TFWRAP_TERRAFORM_BASEDIR:="$HOME/.local/libexec/terraform"}"
+: "${TFWRAP_TERRAFORM_AUTO_INSTALL:=""}"
 
 # Source rc file(s)
 
@@ -63,7 +64,16 @@ terraform_bin="${TFWRAP_TERRAFORM_BASEDIR}/${tfver}/terraform"
 
 debug "Trying to use Terraform binary: $terraform_bin"
 
-[ -x "$terraform_bin" ] || err "Terraform binary not found: $terraform_bin" 
+if ! [ -x "$terraform_bin" ]; then
+	if [ -n "$TFWRAP_TERRAFORM_AUTO_INSTALL" ]; then
+		debug "Installing Terraform $tfver"
+		tfwrap-terraform-install -v "$tfver"
+
+		[ -x "$terraform_bin" ] || err "Could not install Terraform version $tfver"
+	else
+		err "\$TFWRAP_TERRAFORM_AUTO_INSTALL is not set and Terraform binary not found: $terraform_bin"
+	fi
+fi
 
 debug "Executing:" "$terraform_bin" "$@"
 

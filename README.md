@@ -77,6 +77,9 @@ environment variables as well:
 * `TFWRAP_TERRAFORM_DISTDIR`: Base directory where `tfwrap-terraform-install`
   puts the downloaded distribution zip files.  It defaults to
   `$HOME/.terraform.d/dist-cache`.
+* `TFWRAP_TERRAFORM_AUTO_INSTALL`: If set to any non-empty value, then
+  `tfwrap` will try to install the desired version of Terraform CLI if not
+  found.
 * `TFWRAP_TERRAFORM_SKIP_VERIFY`: If set to any non-empty value then
   `tfwrap-terraform-install` will not verify the downloaded distribution zip
   file with GnuPG.
