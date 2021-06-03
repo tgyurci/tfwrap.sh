@@ -1,0 +1,30 @@
+# Sample configuration for tfwrap and tfwrap-terraform-install
+#
+# vi: ft=sh
+#
+# Copy this file to ~/.config/tfwrap/tfwraprc or ~/.tfwraprc
+# and modify the settings below.
+
+# When nonempty, debug messages will be printed to stderr.
+# Default value is empty.
+#TFWRAP_DEBUG=
+
+# Base directory for Terraform CLI binaries.
+# Default value: "$HOME/.local/libexec/terraform"
+#TFWRAP_TERRAFORM_BASEDIR="$HOME/.local/libexec/terraform"
+
+# Directory to download Terraform dist zip files, signatures etc.
+# Default value: "$HOME/.terraform.d/dist-cache"
+#TFWRAP_TERRAFORM_DISTDIR="$HOME/.terraform.d/dist-cache"
+
+# When nonempty, install missing Terraform binary automatically.
+# Default value is empty.
+#TFWRAP_TERRAFORM_AUTO_INSTALL=
+
+# When nonempty, skip dist zip verification.
+# Default value is empty.
+#TFWRAP_TERRAFORM_SKIP_VERIFY=
+
+# When nonempty, skip dist zip extraction.
+# Default value is empty.
+#TFWRAP_TERRAFORM_SKIP_EXTRACT=
