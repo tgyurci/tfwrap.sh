@@ -2,7 +2,8 @@
 
 **tfwrap** is a minimalist [Terraform][] wrapper, which can be used to execute
 different versions of Terraform.  The desired version is read from
-`.terraform-version` file it the current directory.
+`.terraform-version` file in the current directory or from
+`$TFWRAP_TERRAFORM_DEFAULT_VERSION` environment variable.
 
 A separate script, `tfwrap-terraform-install` is provided to ease installation
 of the individual Terraform binaries.
@@ -53,7 +54,7 @@ the correct key ID before importing.
 ## Usage
 
 After installed the Terraform binary, run the command `tfwrap` (or `terraform`
-if symlinked) in a Terraform module, which contains a `.terraform-version` file.
+if symlinked) in a Terraform module.
 
 ## Configuration
 
@@ -77,6 +78,9 @@ environment variables as well:
 * `TFWRAP_TERRAFORM_DISTDIR`: Base directory where `tfwrap-terraform-install`
   puts the downloaded distribution zip files.  It defaults to
   `$HOME/.terraform.d/dist-cache`.
+* `TFWRAP_TERRAFORM_DEFAULT_VERSION`: If set to any non-empty value, then
+  `tfwrap` will use it's value if there is no `.terraform-version` file present
+  in the current directory.
 * `TFWRAP_TERRAFORM_AUTO_INSTALL`: If set to any non-empty value, then
   `tfwrap` will try to install the desired version of Terraform CLI if not
   found.

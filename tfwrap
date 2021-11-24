@@ -22,6 +22,7 @@ debug() {
 : "${TFWRAP_SKIP_RC:=""}"
 : "${TFWRAP_RC:=""}"
 : "${TFWRAP_TERRAFORM_BASEDIR:="$HOME/.local/libexec/terraform"}"
+: "${TFWRAP_TERRAFORM_DEFAULT_VERSION:=""}"
 : "${TFWRAP_TERRAFORM_AUTO_INSTALL:=""}"
 
 # Source rc file(s)
@@ -49,14 +50,22 @@ fi
 
 # Reading Terraform version file
 
-[ -f ".terraform-version" ] || err "No such file: .terrform-version"
-[ -r ".terraform-version" ] || err "File is not readable: .terrform-version"
+tfver=""
+if [ -f ".terraform-version" ]; then
+	[ -r ".terraform-version" ] || err "File is not readable: .terrform-version"
 
-tfver="$(tr -d '[:blank:]' < .terraform-version)"
+	tfver="$(tr -d '[:blank:]' < .terraform-version)"
 
-[ -n "$tfver" ] || err "Terraform version file is empty: .terraform-version"
+	[ -n "$tfver" ] || err "Terraform version file is empty: .terraform-version"
 
-debug "Selected Terraform version: $tfver"
+	debug "Selected Terraform version: $tfver from .terraform-version"
+else
+	[ -n "$TFWRAP_TERRAFORM_DEFAULT_VERSION" ] || err "No such file: .terrform-version and \$TFWRAP_TERRAFORM_DEFAULT_VERSION is not set or empty"
+
+	tfver="$TFWRAP_TERRAFORM_DEFAULT_VERSION"
+
+	debug "Selected Terraform version: $tfver from \$TFWRAP_TERRAFORM_DEFAULT_VERSION"
+fi
 
 # Running Terraform binary
 

@@ -17,6 +17,11 @@
 # Default value: "$HOME/.terraform.d/dist-cache"
 #TFWRAP_TERRAFORM_DISTDIR="$HOME/.terraform.d/dist-cache"
 
+# When there is no ".terraform-version" file in the current directory
+# then this value is used as a default.
+# Default value is empty.
+#TFWRAP_TERRAFORM_DEFAULT_VERSION=
+
 # When nonempty, install missing Terraform binary automatically.
 # Default value is empty.
 #TFWRAP_TERRAFORM_AUTO_INSTALL=
