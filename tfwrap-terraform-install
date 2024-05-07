@@ -100,14 +100,6 @@ debug "Fetching checksum signature: $checksum_sig_file"
 curl -fLOsS "${url_prefix}/${checksum_sig_file}"
 
 if [ -z "$TFWRAP_TERRAFORM_SKIP_VERIFY" ]; then
-	command_exists shasum ||
-		err "The command 'shasum' is not found!  Install Perl 5 or \
-define TFWRAP_TERRAFORM_SKIP_VERIFY to skip verification!"
-
-	debug "Verifying dist checksum"
-	grep -F -e "${dist_file}" "${checksum_file}" | shasum  -c - >/dev/null ||
-		err "Checksum failed for: ${terraform_dist_dir}/${dist_file} with ${terraform_dist_dir}/${checksum_file}"
-
 	command_exists gpgv ||
 		err "The command 'gpgv' is not found! Install GnuPG or \
 define TFWRAP_TERRAFORM_SKIP_VERIFY to skip verification!"
@@ -115,6 +107,14 @@ define TFWRAP_TERRAFORM_SKIP_VERIFY to skip verification!"
 	debug "Verifying checksum signature"
 	gpgv --quiet "${checksum_sig_file}" "${checksum_file}" ||
 		err "Signature verification failed for: ${terraform_dist_dir}/${checksum_file}"
+
+	command_exists shasum ||
+		err "The command 'shasum' is not found!  Install Perl 5 or \
+define TFWRAP_TERRAFORM_SKIP_VERIFY to skip verification!"
+
+	debug "Verifying dist checksum"
+	grep -F -e "${dist_file}" "${checksum_file}" | shasum  -c - >/dev/null ||
+		err "Checksum failed for: ${terraform_dist_dir}/${dist_file} with ${terraform_dist_dir}/${checksum_file}"
 else
 	debug "\$TFWRAP_TERRAFORM_SKIP_VERIFY is set, skipping dist verify"
 fi
