@@ -79,7 +79,7 @@ terraform_dist_dir="${TFWRAP_TERRAFORM_DISTDIR}/${version}"
 
 debug "Terraform dist directory: $terraform_dist_dir"
 
-mkdir -p "$terraform_dist_dir"
+mkdir -p -- "$terraform_dist_dir"
 cd "$terraform_dist_dir"
 
 command_exists curl ||
@@ -128,7 +128,7 @@ or define TFWRAP_TERRAFORM_SKIP_EXTRACT to skip extration of the downloaded dist
 
 	debug "Extracting Terraform binary to: $terraform_bin_dir"
 
-	mkdir -p "$terraform_bin_dir"
+	mkdir -p -- "$terraform_bin_dir"
 	unzip -o -qq "${terraform_dist_dir}/${dist_file}" -d "${terraform_bin_dir}"
 else
 	debug "\$TFWRAP_TERRAFORM_SKIP_EXTRACT is set, skipping extracting distribution"
