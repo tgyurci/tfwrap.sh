@@ -10,8 +10,8 @@
 #TFWRAP_DEBUG=
 
 # Base directory for Terraform CLI binaries.
-# Default value: "$HOME/.local/libexec/terraform"
-#TFWRAP_TERRAFORM_BASEDIR="$HOME/.local/libexec/terraform"
+# Default value: "$HOME/.terraform.d/dist"
+#TFWRAP_TERRAFORM_BASEDIR="$HOME/.terraform.d/dist"
 
 # Directory to download Terraform dist zip files, signatures etc.
 # Default value: "$HOME/.terraform.d/dist-cache"

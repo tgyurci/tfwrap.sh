@@ -21,7 +21,7 @@ debug() {
 
 : "${TFWRAP_SKIP_RC:=""}"
 : "${TFWRAP_RC:=""}"
-: "${TFWRAP_TERRAFORM_BASEDIR:="$HOME/.local/libexec/terraform"}"
+: "${TFWRAP_TERRAFORM_BASEDIR:="$HOME/.terraform.d/dist"}"
 : "${TFWRAP_TERRAFORM_DEFAULT_VERSION:=""}"
 : "${TFWRAP_TERRAFORM_AUTO_INSTALL:=""}"
 

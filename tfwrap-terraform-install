@@ -23,7 +23,7 @@ command_exists() {
 
 : "${TFWRAP_SKIP_RC:=""}"
 : "${TFWRAP_RC:=""}"
-: "${TFWRAP_TERRAFORM_BASEDIR:="$HOME/.local/libexec/terraform"}"
+: "${TFWRAP_TERRAFORM_BASEDIR:="$HOME/.terraform.d/dist"}"
 : "${TFWRAP_TERRAFORM_DISTDIR:="$HOME/.terraform.d/dist-cache"}"
 : "${TFWRAP_TERRAFORM_SKIP_VERIFY:=""}"
 : "${TFWRAP_TERRAFORM_SKIP_EXTRACT:=""}"
